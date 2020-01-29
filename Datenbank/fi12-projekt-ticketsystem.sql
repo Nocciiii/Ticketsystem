@@ -23,7 +23,7 @@ CREATE TABLE Board_ColumnName (
 )
 /
 
-CREATE TABLE columnname (
+CREATE TABLE ColumnName (
   ColumnNameId NUMBER(5) PRIMARY KEY,
   Name VARCHAR2(25) NOT NULL UNIQUE
 )
