@@ -1,0 +1,41 @@
+.logo{
+    width: 120px;
+    height: 45px;
+    display: block;
+}
+.menu{
+    height: 30px;
+    width: 100%;
+    display: block;
+    background-color: #006699;
+    font-size: 16;
+    font-style: bold;
+    font-family: Arial;
+    color: #FFFAFA;
+    position: absolute;
+    align-content: center;
+}
+.body{
+  margin-top: 80px;
+  margin-bottom: 40px;
+  margin-left:40px;
+  margin-right: 40px;
+  align-items: center;   
+}
+.footer{
+    height: 50px;
+    width: 100%;
+    bottom:0;
+    position: fixed;
+    background-color: #006699;
+}
+.footertable{
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    position: absolute;
+}
+.footertableElement{
+    text-align: center;
+}
