@@ -1,0 +1,91 @@
+#logo{
+    height: 45px;
+    width: 45px;
+    display: block;
+}
+#options{
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+.menu{
+    height: 30px;
+    width: 100%;
+    display: block;
+    background-color: #006699;
+    font-size: 16;
+    font-style: bold;
+    font-family: Arial;
+    color: #FFFAFA;
+    position: absolute;
+    align-content: center;
+}
+.logindata{
+    height: 300px;
+    width: 600px;
+    margin-left: 320px;
+    margin-right: 320px;
+    margin-bottom: 320px;
+    border-color: black;
+    border-width: 4px;
+    border-style: solid;
+    align-content: center;
+}
+.logindataContent{
+    width: 50%;
+    float: right;
+    align-content: right;
+}
+.dropdownContent {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 140px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdownContent a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownContent a:hover {background-color: #ddd;}
+
+.dropdownTickets:hover .dropdownContent {display: block;}
+
+.body{
+  margin-top: 80px;
+  margin-bottom: 80px;
+  margin-left:40px;
+  margin-right: 40px;
+  align-items: center;   
+}
+.footer{
+    height: 50px;
+    width: 100%;
+    bottom:0;
+    position: fixed;
+    background-color: #006699;
+}
+.footertable{
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    position: absolute;
+    width:100%;
+}
+.footertableElement{
+    text-align: center;
+    display: inline;
+    margin-right: 50px;
+}
+.ticket{
+
+}
+.board{
+    
+}
