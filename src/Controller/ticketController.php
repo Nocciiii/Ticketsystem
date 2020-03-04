@@ -20,18 +20,22 @@
             $projectSql = $pdo->prepare('SELECT boardId FROM Board WHERE ProjectName = ?');
             $projectSql->execute([$projectname]);
             $projectId = $projectSql->fetch();
+            echo $projectId[0];
 
             $authorSql = $pdo->prepare('SELECT UserId FROM User WHERE Username = ?');
             $authorSql->execute([$authorname]);
             $authorId = $authorSql->fetch();
+            echo $authorId[0];
 
             $prioritySql = $pdo->prepare('SELECT priorityId FROM priority WHERE priority = ?');
             $prioritySql->execute([$priority]);
             $priorityId = $prioritySql->fetch();
+            echo $priorityId[0];
 
             $statusSql = $pdo->prepare('SELECT statusId FROM status WHERE status = ?');
             $statusSql->execute([$status]);
             $statusId = $statusSql->fetch();
+            echo $statusId[0];
 
             addTicketWithIds($pdo, $projectId, $ticketSummary, $authorId, $ticketDescribtion, $priorityId, $statusId);
         }
@@ -40,21 +44,14 @@
 
     function addTicketWithIds($pdo, $projectId, $ticketSummary, $authorId, $ticketDescribtion, $priorityId, $statusId)
     {
-        $ticketInsert = $pdo->prepare('INSERT INTO Ticket (
-            TicketSummary, Priority, Author, Status, Logs, TicketDescribtion, board
-        ) VALUES (?, ?, ?, ?, 0, ?, ?)'
-        );
-        $ticketInsert->execute([$ticketSummary, $priorityId[0], $authorId[0], $statusId[0], $ticketDescribtion, $projectId[0]]);
-        $pdo->commit();
-        $ticketId = $pdo->lastInsertId();
+        $ticketInsert = $pdo->prepare('INSERT INTO Ticket (TicketSummary, Priority, Author, Status, Logs, TicketDescribtion, board) VALUES (?, ?, ?, ?, 0, ?, ?)');
+        $success = $ticketInsert->execute([$ticketSummary, $priorityId[0], $authorId[0], $statusId[0], $ticketDescribtion, $projectId[0]]);
         
-        if($ticketInsert === true)
+        if($success === true)
         {
-            $UserTicket = $pdo->prepare('INSERT INTO User_Ticket (
-                User, Ticket
-            ) VALUES (?, ?)'
-            );
-            $UserTicket->execute([$authorId, $ticketId]);
+            echo "hallo";
+            $UserTicket = $pdo->prepare('INSERT INTO User_Ticket (User, Ticket) VALUES (?, (SELECT MAX(TicketId) FROM Ticket))');
+            $UserTicket->execute([$authorId[0]]);
 
             if($UserTicket === false)
             {
@@ -71,17 +68,11 @@
         {
             connectPDO();
             $pdo = $_SESSION['conn'];
-            $deleteUserTicket = $pdo->prepare('DELETE User_Ticket
-                FROM User_Ticket ut LEFT JOIN Ticket t
-                ON ut.Ticket = t.TicketId
-                WHERE t.ticketSummary = ?');
+            $deleteUserTicket = $pdo->prepare('DELETE User_Ticket FROM User_Ticket ut LEFT JOIN Ticket t ON ut.Ticket = t.TicketId WHERE t.ticketSummary = ?');
             $deleteUserTicket->execute([$ticketSummary]);
 
-            $deleteTicket = $pdo->prepare('DELETE 
-                FROM Ticket 
-                WHERE ticketname = ?'
-            );
-            $deleteTicket->execute();
+            $deleteTicket = $pdo->prepare('DELETE FROM Ticket WHERE ticketsummary = ?');
+            $deleteTicket->execute([$ticketSummary]);
 
             if(deleteTicket === false)
             {
@@ -98,9 +89,7 @@
         $boardSql->execute([$boardname]);
         $boardId = $boardSql->fetchAll();
         
-        $statement = $pdo->prepare('SELECT * 
-            FROM Ticket WHERE BoardId = ?'
-        );
+        $statement = $pdo->prepare('SELECT * FROM Ticket WHERE BoardId = ?');
         
         $tickets = array();
         $statement->execute();
@@ -121,8 +110,40 @@
             $newTicket->setTicketLogs($row[7]);
             array_push($tickets, $newTicket);
         }
-        $board;
+        $stati = array();
+        //ToDo: Change the select so that only stati will be selected that are used on the board
+        $statiSql = $pdo->query('SELECT * FROM Status');
+        $stati = $statiSql->fetchAll();
+
+        FOREACH($stati as $status)
+        {
+            $board = $board.'<div id="status_"'.$ticket[0].' onclick="on(this)" class="board">';
+            $board = $board.'<h1>'.$status[1].'</h1><hr>';
+            $statusassigneedTickets[] ='';
+            FOREACH($tickets as $ticket)
+            {
+                if($ticket->getStatus() === $status[0])
+                {
+                    array_push($statusassigneedTickets, $ticket);
+                    $tickets = array_diff($tickets, $ticket);
+                }
+            }
+            FOREACH($statusassigneedTickets as $statusassigneedTicket)
+            {
+                $board = $board.'<div id="ticket"class="ticket">';
+                $board = $board.
+                $ticket->getTicketSummary().'<hr>'.
+                'Author: '.$ticket->getTicketAuthor().'<hr>'.
+                $ticket->getTicketDescription().'<hr>'.
+                'Zugewiesen: '.$ticket->getTicketAssignee();
+                $board = $board.'</div>';
+            }
+            $board = $board.'</div>';
+        }
+        //List of all Tickets, needed for detailview
+        $_SESSION['Tickets'] = $tickets;
+        //finished board
         $_SESSION['Board'] = $board;
-            
+        closePDO();
         die('Ticket could not be found');
     }
