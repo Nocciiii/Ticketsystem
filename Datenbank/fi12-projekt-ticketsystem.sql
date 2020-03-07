@@ -17,7 +17,6 @@ CREATE TABLE Board (
   BoardId INT(5) AUTO_INCREMENT PRIMARY KEY,
   ProjectName VARCHAR(25) NOT NULL UNIQUE,
   Privilege INT(5) NOT NULL,
-  ColumnOrder VARCHAR(15) NOT NULL,
 
   CONSTRAINT Board_Privilege_FK FOREIGN KEY (Privilege)
 	REFERENCES Privilege(PrivilegeID)
@@ -28,6 +27,7 @@ CREATE TABLE Board (
 CREATE TABLE Board_Status (
   Board INT(5) NOT NULL,
   Status INT(5) NOT NULL,
+  OrderNumber INT(5) NOT NULL,
 
   CONSTRAINT Board_Status_Board_FK FOREIGN KEY (Board)
   REFERENCES Board(BoardId),
@@ -48,7 +48,7 @@ CREATE TABLE `User` (
   UserId INT(5) AUTO_INCREMENT PRIMARY KEY,
   Username VARCHAR(25) NOT NULL UNIQUE,
   Email VARCHAR(30) NOT NULL UNIQUE, 
-  Passwort VARCHAR(50) NOT NULL,
+  Password VARCHAR(50) NOT NULL,
   Usertype INT(5) NOT NULL,
   
   CONSTRAINT User_Usertype_FK FOREIGN KEY (Usertype)

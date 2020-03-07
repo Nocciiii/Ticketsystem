@@ -1,97 +1,106 @@
 <?php
 class Board {
-    public $boardId='';
-    public $boardName='';
-    public $privilege='';
+    private $boardId = '';
+    private $boardName = '';
+    private $privilege = '';
+    private $status = array();
     
-    function getBoardName()
+    public function getBoardName()
     { 
         return $this->boardName; 
     }
-    function setBoardName($boardName)
+    public function setBoardName($boardName)
     { 
         $this->boardName = $boardName; 
     }
-    function getBoardId()
+    public function getBoardId()
     { 
         return $this->boardId; 
     }
-    function setBoardId($boardId)
+    public function setBoardId($boardId)
     { 
         $this->boardId = $boardId; 
     }
-    function getPrivilege()
+    public function getPrivilege()
     { 
         return $this->privilege; 
     }
-    function setPrivilege($privilege)
+    public function setPrivilege($privilege)
     { 
         $this->privilege = $privilege; 
+    }
+    public function getStatus()
+    { 
+        return $this->status; 
+    }
+    public function setStatus($status)
+    { 
+        array_push($this->status, $status);
     }
 }
 
 class Ticket{
-    public $ticketId='';
-    public $ticketSummary='';
-    public $ticketAuthor='';
-    public $ticketDescription='';
-    public $ticketAssignee='';
-    public $ticketStatus='';
-    public $ticketLogs='';
+    private $ticketId='';
+    private $ticketSummary='';
+    private $ticketAuthor='';
+    private $ticketDescription='';
+    private $ticketAssignee='';
+    private $ticketStatus='';
+    private $ticketLogs='';
     
-    function getTicketId()
+    public function getTicketId()
     { 
         return $this->ticketId; 
     }
-    function setTicketId($ticketId)
+    public function setTicketId($ticketId)
     { 
         $this->ticketId = $ticketId; 
     }
-    function getTicketSummary()
+    public function getTicketSummary()
     { 
         return $this->ticketSummary; 
     }
-    function setTicketSummary($ticketSummary)
+    public function setTicketSummary($ticketSummary)
     { 
         $this->ticketSummary = $ticketSummary; 
     }
-    function getTicketAuthor()
+    public function getTicketAuthor()
     { 
         return $this->ticketAuthor; 
     }
-    function setTicketAuthor($ticketAuthor)
+    public function setTicketAuthor($ticketAuthor)
     { 
         $this->ticketAuthor = $ticketAuthor; 
     }
-    function getTicketDescription()
+    public function getTicketDescription()
     { 
         return $this->ticketDescription; 
     }
-    function setTicketDescription($ticketDescription)
+    public function setTicketDescription($ticketDescription)
     { 
         $this->ticketDescription = $ticketDescription; 
     }
-    function getTicketAssignee()
+    public function getTicketAssignee()
     { 
         return $this->ticketAssignee; 
     }
-    function setTicketAsssignee($ticketAssignee)
+    public function setTicketAsssignee($ticketAssignee)
     { 
         $this->ticketAssignee = $ticketAssignee; 
     }
-    function geTicketStatus()
+    public function geTicketStatus()
     { 
         return $this->ticketStatus; 
     }
-    function setTicketStatus($ticketStatus)
+    public function setTicketStatus($ticketStatus)
     { 
         $this->ticketStatus = $ticketStatus; 
     }
-    function getTicketLogs()
+    public function getTicketLogs()
     { 
         return $this->ticketLogs; 
     }
-    function setTicketLogs($ticketLogs)
+    public function setTicketLogs($ticketLogs)
     { 
         $this->ticketLogs = $ticketLogs; 
     }

@@ -1,25 +1,49 @@
 <?php
-   include ("../Controller/classes.php");
+   include_once("../Controller/classes.php");
    include ("../Controller/boardController.php");
    include ("../Controller/ticketController.php");
    $boardController = new BoardController();
-   $boards = $boardController->getProjects();
+   $boardController->getProjects();
 ?>
 <html>
     <head>
         <link rel="stylesheet" type="text/css"href="../CSS/main.css">
         <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
         <script>
+            //function to build the used Board
             document.getElementById("board").onclick = function() {
                     $.ajax({
                         url : "../Controller/ticketController.php",
                         type : "POST",
-                        data : { action: 'getTickets', 
-                            username : document.getElementById("board") },
+                        data : { action: 'getTicket', 
+                            boardname : document.getElementById("board") },
                         processData: false,
                         contentType: false,
+                        sucess: function(data){
+                            document.getElementById("body").innerHTML=data;
+                        }
                     }); 
                 };
+            //functions for boarddetails
+            function on(ele) { 
+            var id = ele.id;
+            $.ajax({
+                                url : "../PageBuilder/ticketdetails.php",
+                                type : "POST",
+                                data : { action: 'getTicketdetails', 
+                                    status : id },
+                                processData: false,
+                                contentType: false,
+                                success: function(data){
+                                    document.getElementById("details").innerHTML = data;
+                                }
+                            }); 
+            document.getElementById("ticketDetails").style.display = "block";
+            }
+
+            function off() {
+                document.getElementById("ticketDetails").style.display = "none";
+            }
         </script>
     </head>
     <body>
@@ -39,7 +63,8 @@
                                 <table style="width: 100%">      
                                     <!-- PHP loop for all tickets -->
                                     <?php
-                                        foreach($boards as $board)
+                                        //loop to add every Project to the Dropdownmenu
+                                        foreach($_SESSION['project'] as $board)
                                         {
                                             printf("<tr><td><label id='board'>".$board[1]."</label></td></tr>");
                                         }
@@ -87,6 +112,11 @@
                 </tr>
             </table>
         </div>
+        <div id="ticketDetails">
+                <div id ="details">
+                    <label onclick="off()">X</label>
+                </div>
+            </div>
         <div class="body">
         </div>
         <footer>
