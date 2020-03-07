@@ -3,7 +3,9 @@
     include "connectorController.php";    
     
     //addProject("420", ["Ready", "In Progress", "Review", "Done", "YOLOMASTERHASACCEPTED"]);
-    getProjects();  
+    //addStatus(["UwU", "UmUd"]);
+    deleteProject("420");
+    //getProjects();  
     
     function addProject($projectname, array $statusArray)
     {
@@ -50,6 +52,40 @@
         }
         closePDO();
     }
+
+    function addStatus(array $statusArray)
+    {
+        connectPDO();
+        $pdo = $_SESSION['conn'];
+        //$project = $_SESSION["currentProject"];
+
+        foreach($statusArray as $status)
+        {
+            $getStatusId = $pdo->prepare("SELECT StatusId FROM Status WHERE Status = ?");
+            $getStatusId->execute([$status]);
+            if(!$statusId = $getStatusId->fetch(PDO::FETCH_ASSOC))
+            {
+                $addStatus = $pdo->prepare("INSERT INTO Status (Status) VALUES (?)");
+                $addStatus->execute([$status]);
+
+                $getStatusId = $pdo->query("SELECT MAX(StatusId) AS StatusId FROM Status");
+                $statusId = $getStatusId->fetch(PDO::FETCH_ASSOC);
+            }
+
+            if($statusId["StatusId"] > 0)
+            {
+                $getColumnOrder = $pdo->prepare("SELECT MAX(OrderNumber) AS OrderNumber FROM board_status WHERE board = 1");
+                $getColumnOrder->execute([/*$project->getBoardId(), */]);
+                if($columnOrderArray = $getColumnOrder->fetch(PDO::FETCH_ASSOC))
+                {
+                    var_dump((int)$columnOrderArray["OrderNumber"] + 1);
+                    $addProjectColumn = $pdo->prepare("INSERT INTO board_status (Board, Status, OrderNumber) VALUES ((SELECT MAX(BoardId) FROM Board), ?, ?)");
+                    $addProjectColumn->execute([$statusId["StatusId"], (int)$columnOrderArray["OrderNumber"] + 1]);
+                }
+            }
+        }
+        closePDO();
+    }
     
     function deleteProject($projectname)
     {
@@ -58,12 +94,14 @@
             connectPDO();
             $pdo = $_SESSION['conn'];
             $deleteBoard = $pdo->prepare("DELETE FROM Board WHERE ProjectName = ?");
-            $deleteTicket = $pdo->prepare("DELETE FROM Ticket WHERE board = ?");
+            $deleteTicket = $pdo->prepare("DELETE FROM Ticket WHERE board = (SELECT boardId FROM Board WHERE ProjectName = ?)");
+            $deleteBoardStatus = $pdo->prepare("DELETE FROM Board_Status WHERE board = (SELECT boardId FROM Board WHERE ProjectName = ?)");
             
+            $deleteBoardStatus->execute([$projectname]);
             $deleteTicket->execute([$projectname]);
             $deleteBoard->execute([$projectname]);
             
-            if($deleteTicket === false OR $deleteBoard === false)
+            if($deleteTicket === false OR $deleteBoard === false OR $deleteBoardStatus === false)
             {
                 $_SESSION['error'] = "Project could not be deleted";
             }

@@ -68,7 +68,7 @@
         {
             connectPDO();
             $pdo = $_SESSION['conn'];
-            $deleteUserTicket = $pdo->prepare('DELETE User_Ticket FROM User_Ticket ut LEFT JOIN Ticket t ON ut.Ticket = t.TicketId WHERE t.ticketSummary = ?');
+            $deleteUserTicket = $pdo->prepare('DELETE User_Ticket FROM User_Ticket WHERE ticket = (SELECT TicketId FROM Ticket WHERE ticketsummary = ?)');
             $deleteUserTicket->execute([$ticketSummary]);
 
             $deleteTicket = $pdo->prepare('DELETE FROM Ticket WHERE ticketsummary = ?');

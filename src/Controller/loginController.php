@@ -2,7 +2,7 @@
     include 'connectorController.php';
     session_start();
     
-    //signUp("Timo", "timoadelmann@gmail.com", "69ForLife", "Developer", ["YoloTrollMaster69", "WASGEHTAB"]);
+    signUp("Timo", "timoadelmann@gmail.com", "69ForLife", "Developer", ["YoloTrollMaster69", "WASGEHTAB"]);
     //signUp("Jamie", "jolo@gmail.com", "Jolo69", "Developer");
     //login("Timo", "69ForLife");
     //addPrivileges(["IAMBORED"]);
