@@ -19,6 +19,7 @@
         {
             echo $username['Username'];
         }
+        closePDO();
     }
 
     function login ($username, $password)

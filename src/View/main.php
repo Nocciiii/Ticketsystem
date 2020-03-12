@@ -4,18 +4,20 @@
    include ("../Controller/ticketController.php");
    $boardController = new BoardController();
    $boardController->getProjects();
+   //function to build all boards in advance
+   $boardController->getAllBoards();
 ?>
 <html>
     <head>
         <link rel="stylesheet" type="text/css"href="../CSS/main.css">
         <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
         <script>
-            //function to build the used Board
+            //function to get the selected Board
             document.getElementById("board").onclick = function() {
                     $.ajax({
-                        url : "../Controller/ticketController.php",
+                        url : "../Controller/boardController.php",
                         type : "POST",
-                        data : { action: 'getTicket', 
+                        data : { action: 'getBoardFromList', 
                             boardname : document.getElementById("board") },
                         processData: false,
                         contentType: false,
@@ -44,6 +46,29 @@
             function off() {
                 document.getElementById("ticketDetails").style.display = "none";
             }
+            function deleteTicket(summary)
+            {
+                $.ajax({
+                                url : "../Controller/ticketController.php",
+                                type : "POST",
+                                data : { action: 'deleteTicket', 
+                                    summary : summary },
+                                processData: false,
+                                contentType: false,
+                                }
+                            });
+            }
+            function deleteBoard()
+            {
+                $.ajax({
+                                url : "../Controller/boardController.php",
+                                type : "POST",
+                                data : { action: 'deleteProject'},
+                                processData: false,
+                                contentType: false,
+                                }
+                            });
+            }
         </script>
     </head>
     <body>
@@ -53,9 +78,6 @@
         <div class="menu">
             <table style="width: 100%">
                 <tr>
-                    <th width="10%">
-                        <label>Tickets</label>
-                    </th>
                     <th width="10%">
                         <div class="dropdownTickets">
                             <label>Boards</label>
@@ -100,7 +122,10 @@
                             </div>
                         </div>
                     </th>
-                    <th width="50%">
+                    <th>
+                        <button type="button" onclick="deleteBoard()">Board l&ouml;schen</button>
+                    </th>
+                    <th width="40%">
                         <!-- Empty column for layout -->
                     </th>
                     <th width="20%">

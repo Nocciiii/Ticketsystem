@@ -67,7 +67,8 @@ public function getTicketdetails()
             '<label id="author">Author: '
                 .$detailticket->getTicketAuthor()).            
             '</label><br>
-            <input type ="button" value="update" onclick="updateTicket()">
+            <input type ="button" value="update" onclick="updateTicket()"><br>
+            <button type="button" onclick="deleteTicket('.$detailticket.getTicketSummary().')">L&ouml;schen</button>
         </div>';
 
     closePDO();

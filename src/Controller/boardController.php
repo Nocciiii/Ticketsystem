@@ -87,9 +87,9 @@
         closePDO();
     }
     
-    function deleteProject($projectname)
+    function deleteProject()
     {
-        if($projectname !== null)
+        if($_SESSION['usedBoard'] !== null)
         {
             connectPDO();
             $pdo = $_SESSION['conn'];
@@ -159,4 +159,157 @@
             $_SESSION['project'] = $projects;
         };
         closePDO();
+    }
+    function getBoard($boardname)
+    {
+        connectPDO();
+        $pdo = $_SESSION['conn'];
+        $boardSql = $pdo->prepare('SELECT BoardId FROM Board WHERE BoardName = ?');
+        $boardSql->execute([$boardname]);
+        $boardId = $boardSql->fetchAll();
+        
+        $statement = $pdo->prepare('SELECT * FROM Ticket WHERE BoardId = ?');
+        
+        $tickets = array();
+        $statement->execute();
+        $rows = $statement->fetchAll();
+        foreach($rows as $row)
+        {
+            $newTicket = new Ticket();
+            $newTicket->setTicketId($row[0]);
+            $newTicket->setTicketSummary($row[2]);
+            $ticketDetailQuery = $pdo->prepare('SELECT Username FROM User WHERE UserId = ?');
+            $ticketDetailQuery->execute($row[3]);
+            $newTicket->setTicketAuthor($ticketDetailQuery->fetch());
+            $newTicket->setTicketDescription($row[4]);
+            $ticketDetailQuery = $pdo->prepare('SELECT Username FROM User WHERE UserId = ?');
+            $ticketDetailQuery->execute($row[5]);
+            $newTicket->setTicketAssignee($ticketDetailQuery->fetch());
+            $newTicket->setTicketStatus($row[6]);
+            $newTicket->setTicketLogs($row[7]);
+            array_push($tickets, $newTicket);
+        }
+        $stati = array();
+        //ToDo: Change the select so that only stati will be selected that are used on the board
+        $statiSql = $pdo->query('SELECT * FROM Status');
+        $stati = $statiSql->fetchAll();
+
+        FOREACH($stati as $status)
+        {
+            $board = $board.'<div id="status_"'.$ticket[0].' onclick="on(this)" class="board">';
+            $board = $board.'<h1>'.$status[1].'</h1><hr>';
+            $statusassigneedTickets[] ='';
+            FOREACH($tickets as $ticket)
+            {
+                if($ticket->getStatus() === $status[0])
+                {
+                    array_push($statusassigneedTickets, $ticket);
+                    $tickets = array_diff($tickets, $ticket);
+                }
+            }
+            FOREACH($statusassigneedTickets as $statusassigneedTicket)
+            {
+                $board = $board.'<div id="ticket"class="ticket">';
+                $board = $board.
+                $ticket->getTicketSummary().'<hr>'.
+                'Author: '.$ticket->getTicketAuthor().'<hr>'.
+                $ticket->getTicketDescription().'<hr>'.
+                'Zugewiesen: '.$ticket->getTicketAssignee();
+                $board = $board.'</div>';
+            }
+            $board = $board.'</div>';
+        }
+        //List of all Tickets, needed for detailview
+        $_SESSION['Tickets'] = $tickets;
+        //finished board
+        $_SESSION['Board'] = $board;
+        closePDO();
+        die('Ticket could not be found');
+    }
+    
+    function getAllBoards()
+    {
+        connectPDO();
+        $pdo = $_SESSION['conn'];
+        $boardSql = $pdo->prepare('SELECT BoardId, Boardname FROM Board');
+        $boardSql->execute();
+        $boards = $boardSql->fetchAll();
+        $allBoards[] ='';
+        $allTickets[] ='';
+        FOREACH($boards as $selectedBoard)
+        {
+            $statement = $pdo->prepare('SELECT * FROM Ticket WHERE BoardId ='.$selectedBoard[0]);
+            $tickets = array();
+            $statement->execute();
+            $rows = $statement->fetchAll();
+            foreach($rows as $row)
+            {
+                $newTicket = new Ticket();
+                $newTicket->setTicketId($row[0]);
+                $newTicket->setTicketSummary($row[2]);
+                $ticketDetailQuery = $pdo->prepare('SELECT Username FROM User WHERE UserId = ?');
+                $ticketDetailQuery->execute($row[3]);
+                $newTicket->setTicketAuthor($ticketDetailQuery->fetch());
+                $newTicket->setTicketDescription($row[4]);
+                $ticketDetailQuery = $pdo->prepare('SELECT Username FROM User WHERE UserId = ?');
+                $ticketDetailQuery->execute($row[5]);
+                $newTicket->setTicketAssignee($ticketDetailQuery->fetch());
+                $newTicket->setTicketStatus($row[6]);
+                $newTicket->setTicketLogs($row[7]);
+                array_push($tickets, $newTicket);
+                array_push($allTickets,$newTicket);
+            }
+            $stati = array();
+            //ToDo: Change the select so that only stati will be selected that are used on the board
+            $statiSql = $pdo->query('SELECT * FROM Status');
+            $stati = $statiSql->fetchAll();
+            FOREACH($stati as $status)
+            {
+                $board = $board.'<div id="status_"'.$ticket[0].' onclick="on(this)" class="board">';
+                $board = $board.'<h1>'.$status[1].'</h1><hr>';
+                $statusassigneedTickets[] ='';
+                FOREACH($tickets as $ticket)
+                {
+                    if($ticket->getStatus() === $status[0])
+                    {
+                        array_push($statusassigneedTickets, $ticket);
+                        $tickets = array_diff($tickets, $ticket);
+                    }
+                }
+                FOREACH($statusassigneedTickets as $statusassigneedTicket)
+                {
+                    $board = $board.'<div id="ticket"class="ticket">';
+                    $board = $board.
+                    $ticket->getTicketSummary().'<hr>'.
+                    'Author: '.$ticket->getTicketAuthor().'<hr>'.
+                    $ticket->getTicketDescription().'<hr>'.
+                    'Zugewiesen: '.$ticket->getTicketAssignee();
+                    $board = $board.'</div>';
+                }
+                $board = $board.'</div>';
+                $boardsRow[] ='';
+                array_push($boardsRow, $selectedBoard[1]);
+                array_push($boardsRow, $board);
+                array_push($allBoards, $boardsRow);
+            }
+        }
+        //List of all Tickets, needed for detailview
+        $_SESSION['Tickets'] = $allTickets;
+        //finished boards
+        $_SESSION['Boards'] = $allBoards;
+        closePDO();
+        die('Ticket could not be found');
+    }
+    //searches for the selected Board in the Session, returns only the bord
+    function getBoardFromList($boardname)
+    {
+        FOREACH($_SESSION['Boards'] as $sessionboard)
+        {
+            if($sessionboard[0]===$boardname)
+            {
+                $_SESSION['usedBoard'] = $boardname;
+                return $sessionboard[1];                
+            }
+        }
+        
     }
