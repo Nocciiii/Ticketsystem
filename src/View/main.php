@@ -14,32 +14,32 @@
         <script>
             //function to get the selected Board
             document.getElementById("board").onclick = function() {
-                    $.ajax({
-                        url : "../Controller/boardController.php",
-                        type : "POST",
-                        data : { action: 'getBoardFromList', 
-                            boardname : document.getElementById("board") },
-                        processData: false,
-                        contentType: false,
-                        sucess: function(data){
-                            document.getElementById("body").innerHTML=data;
-                        }
+                $.ajax({
+                    url : "../Controller/boardController.php",
+                    type : "POST",
+                    data : { action: 'getBoardFromList', 
+                        boardname : document.getElementById("board") },
+                    processData: false,
+                    contentType: false,
+                    sucess: function(data){
+                        document.getElementById("body").innerHTML=data;
+                    }
                     }); 
                 };
             //functions for boarddetails
-            function on(ele) { 
-            var id = ele.id;
-            $.ajax({
-                                url : "../PageBuilder/ticketdetails.php",
-                                type : "POST",
-                                data : { action: 'getTicketdetails', 
-                                    status : id },
-                                processData: false,
-                                contentType: false,
-                                success: function(data){
-                                    document.getElementById("details").innerHTML = data;
-                                }
-                            }); 
+            function on(ticket) { 
+                var id = ticket.id;
+                $.ajax({
+                    url : "../PageBuilder/ticketdetails.php",
+                    type : "POST",
+                    data : { action: 'getTicketdetails', 
+                        status : id },
+                    processData: false,
+                    contentType: false,
+                    success: function(data){
+                        document.getElementById("details").innerHTML = data;
+                    }
+                }); 
             document.getElementById("ticketDetails").style.display = "block";
             }
 
@@ -49,25 +49,24 @@
             function deleteTicket(summary)
             {
                 $.ajax({
-                                url : "../Controller/ticketController.php",
-                                type : "POST",
-                                data : { action: 'deleteTicket', 
-                                    summary : summary },
-                                processData: false,
-                                contentType: false,
-                                }
-                            });
+                    url : "../Controller/ticketController.php",
+                    type : "POST",
+                    data : { action: 'deleteTicket', 
+                        summary : summary },
+                    processData: false,
+                    contentType: false,
+                    }
+                });
             }
             function deleteBoard()
             {
                 $.ajax({
-                                url : "../Controller/boardController.php",
-                                type : "POST",
-                                data : { action: 'deleteProject'},
-                                processData: false,
-                                contentType: false,
-                                }
-                            });
+                    url : "../Controller/boardController.php",
+                    type : "POST",
+                    data : { action: 'deleteProject'},
+                    processData: false,
+                    contentType: false,
+                });
             }
         </script>
     </head>
@@ -147,18 +146,19 @@
         <footer>
             <div class="footer">
                 <div class="footertable">
-                        <div class="footertableElement">
-                            Kontakt
-                        </div>
-                        <div class="footertableElement">
-                            Impressum
-                        </div>
-                        <div class="footertableElement">
-                            Datenschutz
-                        </div>
-                        <div class="footertableElement">
-                            Quellen
-                        </div>
+                    <div class="footertableElement">
+                        Kontakt
+                    </div>
+                    <div class="footertableElement">
+                        Impressum
+                    </div>
+                    <div class="footertableElement">
+                        Datenschutz
+                    </div>
+                    <div class="footertableElement">
+                        Quellen
+                    </div>
+                </div>
             </div>
         </footer>
     </body>
